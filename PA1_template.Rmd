@@ -1,4 +1,4 @@
-l---
+---
 title: "Reproducible Research: Peer Assessment 1"
 Author: M. Rizky Satrio
 output: 
