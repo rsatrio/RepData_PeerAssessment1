@@ -1,4 +1,4 @@
----
+l---
 title: "Reproducible Research: Peer Assessment 1"
 Author: M. Rizky Satrio
 output: 
@@ -169,18 +169,18 @@ colnames(activityDataWeekDays)<-c("steps","date","interval","weekflag")
 # Separate the dataset between mean for weekend and mean for weekdays
 meanIntervalWeek<-aggregate(as.numeric(activityDataWeekDays$steps),by=list(activityDataWeekDays$interval,activityDataWeekDays$weekflag),mean)
 colnames(meanIntervalWeek)<-c("interval","weekflag","steps")
-intervalWeekend<-meanIntervalWeek[meanIntervalWeek$weekflag=="Weekend",]
-intervalWeekDays<-meanIntervalWeek[meanIntervalWeek$weekflag=="WeekDays",]
+meanIntervalWeek<-meanIntervalWeek[order(as.numeric(meanIntervalWeek$interval)),]
 rm(activityDataWeekDays)
-rm(meanIntervalWeek)
-intervalWeekend<-intervalWeekend[order(as.numeric(intervalWeekend$interval)),]
-intervalWeekDays<-intervalWeekDays[order(as.numeric(intervalWeekDays$interval)),]
+
 
 #Create the plot
 
-par(mfrow=c(2,1))
-plot(as.numeric(intervalWeekDays$interval),as.numeric(intervalWeekDays$steps),type = "l",xlab = "Interval",ylab = "Average Steps",main = "WeekDays Data",ylim=c(0,250))
-
-plot(as.numeric(intervalWeekend$interval),as.numeric(intervalWeekend$steps),type = "l",xlab = "Interval",ylab = "Average Steps",main = "WeekEnd Data",ylim=c(0,250))
+library("lattice")
+xyplot(as.numeric(steps) ~ as.numeric(interval)| weekflag, 
+           data = meanIntervalWeek,
+           type = "l",
+           xlab = "Interval",
+           ylab = "Number of steps",
+           layout=c(1,2))
 
 ```
