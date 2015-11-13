@@ -1,54 +1,43 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-Author: M. Rizky Satrio
-output: 
-  html_document:
-    toc: true
-    number_sections: true
-    theme: readable
-    keep_md: true
-
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 This code below are used for preprocessing the data:
 
-```{r prepocess data,echo=TRUE}
+
+```r
 activityData<-read.csv(unzip("activity.zip"))
 activityDataWithoutNA<-activityData[!is.na(activityData$steps),]
-
-
 ```
 
 
 ## What is mean total number of steps taken per day?
 Calculation for the number of steps taken per day
-```{r total Steps,echo=TRUE}
+
+```r
 options(scipen=999)
 aggSteps<-aggregate(activityDataWithoutNA$steps,by=list(Date=activityDataWithoutNA$date),sum)
 colnames(aggSteps)<-c("Date","Total Steps")
-
-
-
 ```
 
 ### Histogram of steps taken per day
 
-```{r histogram1, fig.height=6}
+
+```r
 totalSteps<-aggSteps$`Total Steps`
 hist(totalSteps,xlab = "Total Steps Taken",main="Histogram of Steps Taken Per Day")
-
-
 ```
 
-The median for total steps taken per day is : **`r median(totalSteps)`**  
+![](PA1_template_files/figure-html/histogram1-1.png) 
 
-The mean for total steps taken per day is : **`r as.numeric(mean(totalSteps))`**
+The median for total steps taken per day is : **10765**  
+
+The mean for total steps taken per day is : **10766.1886792**
 
 ## What is the average daily activity pattern?
 
-```{r plotAverage,echo=TRUE,fig.height=5}
+
+```r
 avgInterval<-aggregate(activityDataWithoutNA$steps,by=list(activityDataWithoutNA$interval),mean)
 
 colnames(avgInterval)<-c("Interval","Average")
@@ -56,14 +45,12 @@ colnames(avgInterval)<-c("Interval","Average")
 maxMean<-avgInterval[avgInterval$Average==max(avgInterval$Average),]
 
 plot(avgInterval$Interval,avgInterval$Average,type = "l",xlab = "Interval",ylab = "Average Steps",main = "Time Series Plot of Average Steps vs Time Interval")
-
-
-
-
 ```
 
+![](PA1_template_files/figure-html/plotAverage-1.png) 
 
-The biggest mean of steps taken is in interval : **`r maxMean$Interval`**
+
+The biggest mean of steps taken is in interval : **835**
 
 
 
@@ -71,17 +58,17 @@ The biggest mean of steps taken is in interval : **`r maxMean$Interval`**
 
 ###Calculating the number of NA in dataset 
 
-```{r calculateNA,echo=TRUE}
-countNA<-nrow(activityData[is.na(activityData$steps),])
 
+```r
+countNA<-nrow(activityData[is.na(activityData$steps),])
 ```
-The number of rows with missing data are : **`r countNA`**  
+The number of rows with missing data are : **2304**  
 
 ###Imputting NA with mean of that interval
 The missing data will be replaced with the mean of the steps in that interval (5 minute interval)  
 
-```{r imputValue, echo=TRUE,cache=TRUE}
 
+```r
 activityDataImputted<-data.frame(x=character(0),y=character(0),z=numeric(0),stringsAsFactors = FALSE)
 
 count1<-1
@@ -103,33 +90,31 @@ while(count1<=lengthActivityData)  {
   count1<-count1+1 
 }
 colnames(activityDataImputted)<-colnames(activityData)
-
-
-
 ```
 
 
 ###New Histogram
-```{r newHistorgram,echo=TRUE,fig.height=6}
+
+```r
 aggSteps<-aggregate(as.numeric(activityDataImputted$steps),by=list(Date=activityDataImputted$date),sum)
 
 colnames(aggSteps)<-c("Date","Total Steps")
 totalSteps2<-aggSteps$`Total Steps`
 hist(totalSteps2,xlab = "Total Steps Taken",main="Histogram of Steps Taken Per Day")
-
-
 ```
 
-The median for total steps taken per day is : **`r median(totalSteps2)`**  
+![](PA1_template_files/figure-html/newHistorgram-1.png) 
 
-The mean for total steps taken per day is : **`r as.numeric(mean(totalSteps2))`**
+The median for total steps taken per day is : **10766.1886792**  
+
+The mean for total steps taken per day is : **10766.1886792**
 
 *We can see here that the mean value is the same with the original dataset, but the median is differ*
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r plot Weekend vs Weekdays,echo=TRUE,cache=TRUE,fig.height=8}
 
+```r
 # Create new dataset with weekdays flag
 
 count1<-1
@@ -180,5 +165,6 @@ xyplot(as.numeric(steps) ~ as.numeric(interval)| weekflag,
            xlab = "Interval",
            ylab = "Number of steps",
            layout=c(1,2))
-
 ```
+
+![](PA1_template_files/figure-html/plot Weekend vs Weekdays-1.png) 
